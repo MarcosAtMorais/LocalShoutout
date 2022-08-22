@@ -94,9 +94,9 @@ extension ShoutableDelegate {
     
 }
 ```
-*Just set the **shoutoutCenter.delegate** wherever you want to delegate these events*
+*Just set the **shoutoutCenter.delegate** wherever you want to delegate these events*.
 
-#### All examples are located on the Examples folder, including a Delegate one.
+## 📲 All examples are located on the Examples folder, including a Delegate one.
 
 ## 🔨 Swift Package Manager
 
