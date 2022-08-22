@@ -20,6 +20,7 @@
 - **Three simple examples** are included in the package. All leveraging **SwiftUI's power**.
 - **Documented**.
 - **Cancel**: You can always cancel all notifications, a single one or a batch.
+- **Delegate**: Want to capture all the events from scheduling to cancelling? Just adopt the **ShoutableDelegate**!
 - **Build your Notification**: Title, Body, Sound... You can customize as you please.
 
 ## 🚀 Get Started
@@ -31,22 +32,55 @@ Just **import LocalShoutout**:
 import LocalShoutout
 ```
 
-Then, you can use it as you please. Like this quick example:
+Then, you can use it as you please. Declare it like this:
 
 ```swift
-
+let shoutoutCenter: LocalShoutoutCenter = LocalShoutoutCenter()
 ```
 
-An example using the **LabelButtonListView**. This is one option:
+And always remember to Authenticate if this is the first time you are using it on your app (if you try to schedule without authenticating, it will prompt the authentication for you):
 ```swift
-
+shoutoutCenter.authenticate()
 ```
 
-Or, you can also use it making your own stacks and verifying the dynamicTypeSize (no need for the LabelButtonView as it already does):
+An example of how to create and schedule a notification:
+```swift
+        // Creates the Notification Data
+        let notification = NotificationData(identifier: "com.marcostmorais.notifications.tenSecondsFromNow", title: "Let's Go!", body: "This is a notification")
+        
+        // Creates a date
+        let date = Date().addingTimeInterval(10)
+        
+        // Schedule!
+        shoutoutCenter.scheduleNotification(notification: notification, date: date, repeats: false)
+```
+
+Or, you can also cancel a pending notification:
 
 
 ```swift
+        shoutoutCenter.cancelNotification(identifier: "com.marcostmorais.notifications.tenSecondsFromNow")
+```
 
+And even cancel all pending notifications:
+
+
+```swift
+        shoutoutCenter.cancelAllNotifications()
+```
+
+And finally, an example of how to create and schedule a notification using date components:
+```swift
+        // Creates the Notification Data
+        let notification = NotificationData(identifier: "com.marcostmorais.notifications.test", title: "Let's Go!", body: "This is a notification")
+        
+        // Creates a dateComponents object that will represent a repeat at 33 minutes and 2 seconds every hour
+        var dateComponents = DateComponents()
+        dateComponents.minute = 33
+        dateComponents.second = 2
+    
+        // Schedule!
+        shoutoutCenter.scheduleNotification(notification: notification, dateComponents: dateComponents, repeats: true, repeatInterval: .hour)
 ```
 
 All examples are located on the Examples folder.
