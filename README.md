@@ -76,7 +76,27 @@ dateComponents.second = 2
 shoutoutCenter.scheduleNotification(notification: notification, dateComponents: dateComponents, repeats: true, repeatInterval: .hour)
 ```
 
-All examples are located on the Examples folder.
+And remember, you can always capture the events using the ShoutableDelegate, which includes:
+
+```swift
+extension ShoutableDelegate {
+    
+    func centerDidStart(center: LocalShoutoutCenter) { }
+    func centerDidEnd(center: LocalShoutoutCenter) { }
+    
+    func didAuthenticate(result: Result<Bool, Error>) { }
+    
+    func willScheduleNotification(center: LocalShoutoutCenter, notification: NotificationData) { }
+    func didScheduleNotification(result: Result<NotificationData, Error>) { }
+    
+    func willCancelNotification(center: LocalShoutoutCenter) { }
+    func didCancelNotification(center: LocalShoutoutCenter) { }
+    
+}
+```
+*Just set the **shoutoutCenter.delegate** wherever you want to delegate these events*
+
+#### All examples are located on the Examples folder, including a Delegate one.
 
 ## 🔨 Swift Package Manager
 
