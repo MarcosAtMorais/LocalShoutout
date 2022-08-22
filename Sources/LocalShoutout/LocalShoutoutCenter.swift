@@ -9,44 +9,54 @@ import Foundation
 import UserNotifications
 import OSLog
 
-open class LocalShoutout: Shoutable {
+open class LocalShoutoutCenter: Shoutable {
 
-    static let shared = LocalShoutout()
-    let center = UNUserNotificationCenter.current()
+    static let shared = LocalShoutoutCenter()
+    let currentNotificationCenter = UNUserNotificationCenter.current()
     let logger = Logger(subsystem: "LocalShoutout", category: "LocalNotifications")
     
     public var authenticated: Bool = false
     
+    weak var delegate: ShoutableDelegate?
+    
     private init() {
         self.getAuthenticationStatus()
+        delegate?.centerDidStart(center: self)
     }
     
     public func authenticate() {
-        self.center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+        self.currentNotificationCenter.requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, error in
             if let error = error {
-                self.logger.error("\(error.localizedDescription)")
+                self?.logger.error("\(error.localizedDescription)")
+                self?.delegate?.didAuthenticate(result: .failure(error))
+            } else {
+                self?.delegate?.didAuthenticate(result: .success(granted))
             }
-            self.authenticated = granted
+            self?.authenticated = granted
         }
     }
 
     public func scheduleNotification(notification: NotificationData, date: Date, repeats: Bool = false) {
+        self.delegate?.willScheduleNotification(center: self, notification: notification)
         let content = self.buildNotificationContentByUsing(notification)
         let identifier = notification.id
         let triggerDate = Calendar.current.dateComponents([.year, .month, .day], from: date)
         let trigger: UNCalendarNotificationTrigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: repeats)
 
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-        center.add(request, withCompletionHandler: { [weak self] (error) in
+        currentNotificationCenter.add(request, withCompletionHandler: { [weak self] (error) in
             if let error = error {
                 self?.logger.error("\(error.localizedDescription)")
+                self?.delegate?.didScheduleNotification(result: .failure(error))
             } else {
                 self?.logger.debug("Success and Scheduled to: \(triggerDate)")
+                self?.delegate?.didScheduleNotification(result: .success(notification))
             }
         })
     }
     
     public func scheduleNotification(notification: NotificationData, dateComponents: DateComponents, repeats: Bool) {
+        self.delegate?.willScheduleNotification(center: self, notification: notification)
         let content = self.buildNotificationContentByUsing(notification)
         let identifier = notification.id
 
@@ -54,32 +64,40 @@ open class LocalShoutout: Shoutable {
 
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
 
-        center.add(request, withCompletionHandler: { [weak self] (error) in
+        currentNotificationCenter.add(request, withCompletionHandler: { [weak self] (error) in
             if let error = error {
                 self?.logger.error("\(error.localizedDescription)")
+                self?.delegate?.didScheduleNotification(result: .failure(error))
             } else {
                 self?.logger.debug("Success and Scheduled to: \(dateComponents)")
+                self?.delegate?.didScheduleNotification(result: .success(notification))
             }
         })
     }
     
     public func cancelAllNotifications() {
-        self.center.removeAllPendingNotificationRequests()
+        self.delegate?.willCancelNotification(center: self)
+        self.currentNotificationCenter.removeAllPendingNotificationRequests()
+        self.delegate?.didCancelNotification(center: self)
     }
     
     public func cancelNotification(identifier: String) {
-        self.center.removePendingNotificationRequests(withIdentifiers: [identifier])
+        self.delegate?.willCancelNotification(center: self)
+        self.currentNotificationCenter.removePendingNotificationRequests(withIdentifiers: [identifier])
+        self.delegate?.didCancelNotification(center: self)
     }
     
     public func cancelNotifications(identifiers: [String]) {
-        self.center.removePendingNotificationRequests(withIdentifiers: identifiers)
+        self.delegate?.willCancelNotification(center: self)
+        self.currentNotificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
+        self.delegate?.didCancelNotification(center: self)
     }
     
 }
 
-extension LocalShoutout {
+extension LocalShoutoutCenter {
     fileprivate func getAuthenticationStatus() {
-        self.center.getNotificationSettings { settings in
+        self.currentNotificationCenter.getNotificationSettings { settings in
             switch settings.authorizationStatus {
             case .authorized:
                 self.authenticated = true

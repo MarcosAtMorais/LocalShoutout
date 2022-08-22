@@ -23,4 +23,15 @@ public protocol Shoutable {
 
 public protocol ShoutableDelegate: AnyObject {
     
+    func centerDidStart(center: LocalShoutoutCenter)
+    func centerDidEnd(center: LocalShoutoutCenter)
+    
+    func didAuthenticate(result: Result<Bool, Error>)
+    
+    func willScheduleNotification(center: LocalShoutoutCenter, notification: NotificationData)
+    func didScheduleNotification(result: Result<NotificationData, Error>)
+    
+    func willCancelNotification(center: LocalShoutoutCenter)
+    func didCancelNotification(center: LocalShoutoutCenter)
+    
 }
