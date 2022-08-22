@@ -1,3 +1,3 @@
 # LocalShoutout
 
-A description of this package.
+A easy-to-use Local Notification wrapper using the UserNotifications framework.
