@@ -8,6 +8,11 @@
 import SwiftUI
 
 struct ExampleView: View {
+    
+    let shoutoutCenter: LocalShoutoutCenter = LocalShoutoutCenter()
+    
+    @State var authenticated: Bool = false
+    
     var body: some View {
         VStack {
             Text("Schedule Notifications!")
@@ -19,17 +24,20 @@ struct ExampleView: View {
             Button(action: scheduleNotification) {
                 Text("Schedule!")
             }
-            .disabled(!LocalShoutoutCenter.shared.authenticated)
+            .disabled(!authenticated)
+        }
+        .onAppear {
+            self.authenticated = shoutoutCenter.authenticated
         }
     }
     
     private func authenticate() {
-        LocalShoutoutCenter.shared.authenticate()
+        shoutoutCenter.authenticate()
     }
     
     private func scheduleNotification() {
         let notification = NotificationData(identifier: "com.marcostmorais.notifications.weekFromNow", title: "Let's Go!", body: "This is a notification", notificationType: .oneTime)
-        LocalShoutoutCenter.shared.scheduleNotification(notification: notification, date: Date().addingTimeInterval(10), repeats: false)
+        shoutoutCenter.scheduleNotification(notification: notification, date: Date().addingTimeInterval(10), repeats: false)
     }
 }
 

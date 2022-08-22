@@ -47,18 +47,19 @@ class DelegateExampleViewViewModel: ObservableObject {
     @Published var scheduledTimes: Int = 0
     @Published var cancelledTimes: Int = 0
     
+    let shoutoutCenter: LocalShoutoutCenter = LocalShoutoutCenter()
+    
     public init() {
-        self.authenticated = LocalShoutoutCenter.shared.authenticated
-        LocalShoutoutCenter.shared.delegate = self
+        shoutoutCenter.delegate = self
     }
     
     public func authenticate() {
-        LocalShoutoutCenter.shared.authenticate()
+        shoutoutCenter.authenticate()
     }
     
     public func scheduleNotification() {
         let notification = NotificationData(identifier: "com.marcostmorais.notifications.weekFromNow", title: "Let's Go!", body: "This is a notification", notificationType: .oneTime)
-        LocalShoutoutCenter.shared.scheduleNotification(notification: notification, date: Date().addingTimeInterval(10), repeats: false)
+        shoutoutCenter.scheduleNotification(notification: notification, date: Date().addingTimeInterval(10), repeats: false)
     }
     
 }

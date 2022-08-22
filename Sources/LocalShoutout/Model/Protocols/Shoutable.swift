@@ -8,6 +8,9 @@
 import Foundation
 import UserNotifications
 
+/**
+ The protocol that serves as the main foundation for LocalShoutoutCenter.
+ */
 public protocol Shoutable {
     
     var authenticated: Bool { get set }
@@ -19,19 +22,4 @@ public protocol Shoutable {
     func cancelAllNotifications()
     func cancelNotifications(identifiers: [String])
     func cancelNotification(identifier: String)
-}
-
-public protocol ShoutableDelegate: AnyObject {
-    
-    func centerDidStart(center: LocalShoutoutCenter)
-    func centerDidEnd(center: LocalShoutoutCenter)
-    
-    func didAuthenticate(result: Result<Bool, Error>)
-    
-    func willScheduleNotification(center: LocalShoutoutCenter, notification: NotificationData)
-    func didScheduleNotification(result: Result<NotificationData, Error>)
-    
-    func willCancelNotification(center: LocalShoutoutCenter)
-    func didCancelNotification(center: LocalShoutoutCenter)
-    
 }
