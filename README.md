@@ -113,7 +113,7 @@ You can also add this library using Swift Package Manager.
 
 **iOS** 14+
 
-**macOS** 12+
+**macOS** 11+
 
 **watchOS** 7+
 
