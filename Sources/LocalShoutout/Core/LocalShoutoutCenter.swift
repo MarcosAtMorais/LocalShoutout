@@ -37,10 +37,13 @@ open class LocalShoutoutCenter: Shoutable {
     }
 
     public func scheduleNotification(notification: NotificationData, date: Date, repeats: Bool = false) {
+        
+        if !self.authenticated { self.authenticate() }
+        
         self.delegate?.willScheduleNotification(center: self, notification: notification)
         let content = self.buildNotificationContentByUsing(notification)
         let identifier = notification.id
-        let triggerDate = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        let triggerDate = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
         let trigger: UNCalendarNotificationTrigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: repeats)
 
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
@@ -56,6 +59,9 @@ open class LocalShoutoutCenter: Shoutable {
     }
     
     public func scheduleNotification(notification: NotificationData, dateComponents: DateComponents, repeats: Bool) {
+        
+        if !self.authenticated { self.authenticate() }
+        
         self.delegate?.willScheduleNotification(center: self, notification: notification)
         let content = self.buildNotificationContentByUsing(notification)
         let identifier = notification.id
