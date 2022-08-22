@@ -13,7 +13,7 @@ extension NotificationData {
         case oneTime = "OneTime"
         case recurring = "Recurring"
         
-        var localized: String {
+        public var localized: String {
             switch self {
             case .oneTime:
                 if #available(macOS 12, iOS 15, watchOS 8, tvOS 15, *) {
