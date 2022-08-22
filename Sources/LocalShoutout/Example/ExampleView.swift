@@ -26,6 +26,7 @@ struct ExampleView: View {
             }
             .disabled(!authenticated)
         }
+        .padding()
         .onAppear {
             self.authenticated = shoutoutCenter.authenticated
         }
@@ -36,9 +37,16 @@ struct ExampleView: View {
     }
     
     private func scheduleNotification() {
-        let notification = NotificationData(identifier: "com.marcostmorais.notifications.weekFromNow", title: "Let's Go!", body: "This is a notification", notificationType: .oneTime)
-        shoutoutCenter.scheduleNotification(notification: notification, date: Date().addingTimeInterval(10), repeats: false)
+        // Creates the Notification Data
+        let notification = NotificationData(identifier: "com.marcostmorais.notifications.tenSecondsFromNow", title: "Let's Go!", body: "This is a notification")
+        
+        // Creates a Date
+        let date = Date().addingTimeInterval(10)
+        
+        // Schedules!
+        shoutoutCenter.scheduleNotification(notification: notification, date: date, repeats: false)
     }
+    
 }
 
 struct ExampleView_Previews: PreviewProvider {

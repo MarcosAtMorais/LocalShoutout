@@ -37,7 +37,18 @@ public protocol Shoutable {
       - parameters:
          - notification: A notification (NotificationData) that builds the notification with everything that UNNotificationContent requires.
          - dateComponents: The dateComponents that serve as the trigger date.
-         - repeats: A boolean that indicates if the notification should be repeated.
+         - repeats: A boolean that indicates if the notification should be repeated. Note that it will repeat based on the Components and the current Calendar.
+         - repeatInterval: A NotificationRepeatInterval, which can be every minute, hour, day, week, month or year.
+     */
+    func scheduleNotification(notification: NotificationData, dateComponents: DateComponents, repeats: Bool, repeatInterval: NotificationRepeatInterval)
+    
+    /**
+     This method schedules a notification using a NotificationData, Date and if it repeats (bool).
+     
+      - parameters:
+         - notification: A notification (NotificationData) that builds the notification with everything that UNNotificationContent requires.
+         - dateComponents: The dateComponents that serve as the trigger date.
+         - repeats: A boolean that indicates if the notification should be repeated. Note that it will repeat based on the Components and the current Calendar.
      */
     func scheduleNotification(notification: NotificationData, dateComponents: DateComponents, repeats: Bool)
     

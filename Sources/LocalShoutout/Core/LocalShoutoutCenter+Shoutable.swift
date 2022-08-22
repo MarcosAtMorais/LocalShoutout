@@ -7,6 +7,9 @@
 
 import UserNotifications
 
+/**
+ The implementation of the Shoutable protocol. The documentation for it is inside the Shoutable swift file.
+ */
 extension LocalShoutoutCenter: Shoutable {
     public func authenticate() {
         self.currentNotificationCenter.requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, error in
@@ -37,6 +40,32 @@ extension LocalShoutoutCenter: Shoutable {
                 self?.delegate?.didScheduleNotification(result: .failure(error))
             } else {
                 self?.logger.debug("Success and Scheduled to: \(triggerDate)")
+                self?.delegate?.didScheduleNotification(result: .success(notification))
+            }
+        })
+    }
+    
+    public func scheduleNotification(notification: NotificationData, dateComponents: DateComponents, repeats: Bool, repeatInterval: NotificationRepeatInterval) {
+        
+        if !self.authenticated { self.authenticate() }
+        
+        self.delegate?.willScheduleNotification(center: self, notification: notification)
+        let content = self.buildNotificationContentByUsing(notification)
+        let identifier = notification.id
+
+        let dateFromDateComponents = Calendar.current.date(from: dateComponents)
+        let componentsAccordingToRepeatInterval = Calendar.current.dateComponents(repeatInterval.components, from: dateFromDateComponents ?? Date())
+        
+        let trigger: UNCalendarNotificationTrigger = UNCalendarNotificationTrigger(dateMatching: componentsAccordingToRepeatInterval, repeats: repeats)
+
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+
+        currentNotificationCenter.add(request, withCompletionHandler: { [weak self] (error) in
+            if let error = error {
+                self?.logger.error("\(error.localizedDescription)")
+                self?.delegate?.didScheduleNotification(result: .failure(error))
+            } else {
+                self?.logger.debug("Success and Scheduled to: \(dateComponents)")
                 self?.delegate?.didScheduleNotification(result: .success(notification))
             }
         })

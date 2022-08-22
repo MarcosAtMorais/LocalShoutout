@@ -30,7 +30,13 @@ struct DelegateExampleView: View {
                 Text("Schedule!")
             }
             .disabled(!viewModel.authenticated)
+            
+            Button(action: viewModel.cancelNotification) {
+                Text("Cancel!")
+            }
+            .disabled(!viewModel.authenticated)
         }
+        .padding()
     }
     
 }
@@ -58,8 +64,18 @@ class DelegateExampleViewViewModel: ObservableObject {
     }
     
     public func scheduleNotification() {
-        let notification = NotificationData(identifier: "com.marcostmorais.notifications.weekFromNow", title: "Let's Go!", body: "This is a notification", notificationType: .oneTime)
-        shoutoutCenter.scheduleNotification(notification: notification, date: Date().addingTimeInterval(10), repeats: false)
+        // Creates the Notification Data
+        let notification = NotificationData(identifier: "com.marcostmorais.notifications.tenSecondsFromNow", title: "Let's Go!", body: "This is a notification")
+        
+        // Creates a Date
+        let date = Date().addingTimeInterval(10)
+        
+        // Schedules!
+        shoutoutCenter.scheduleNotification(notification: notification, date: date, repeats: false)
+    }
+    
+    public func cancelNotification() {
+        shoutoutCenter.cancelNotification(identifier: "com.marcostmorais.notifications.tenSecondsFromNow")
     }
     
 }
@@ -67,13 +83,9 @@ class DelegateExampleViewViewModel: ObservableObject {
 extension DelegateExampleViewViewModel: ShoutableDelegate {
     
     func centerDidStart(center: LocalShoutoutCenter) {
-        
+        center.authenticated = self.authenticated
     }
-    
-    func centerDidEnd(center: LocalShoutoutCenter) {
-        
-    }
-    
+
     func didAuthenticate(result: Result<Bool, Error>) {
         switch result {
         case .success(let granted):
@@ -84,16 +96,8 @@ extension DelegateExampleViewViewModel: ShoutableDelegate {
         }
     }
     
-    func willScheduleNotification(center: LocalShoutoutCenter, notification: NotificationData) {
-        
-    }
-    
     func didScheduleNotification(result: Result<NotificationData, Error>) {
         self.scheduledTimes += 1
-    }
-    
-    func willCancelNotification(center: LocalShoutoutCenter) {
-        
     }
     
     func didCancelNotification(center: LocalShoutoutCenter) {
