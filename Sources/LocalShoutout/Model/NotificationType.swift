@@ -8,10 +8,10 @@
 import Foundation
 
 extension NotificationData {
-    public enum NotificationType: CaseIterable {
+    public enum NotificationType: String, CaseIterable, RawRepresentable {
         
-        case oneTime
-        case recurring
+        case oneTime = "OneTime"
+        case recurring = "Recurring"
         
         var localized: String {
             switch self {
